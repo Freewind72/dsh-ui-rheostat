@@ -1,11 +1,11 @@
 window.__ModuleLoader__.load({
-    id: "dsh-effort-switcher",
+    id: "dsh-ui-rheostat",
     factory: (require) => {
         const module = { exports: {} };
         const exports = module.exports;
         const react = require("react");
 
-        const name = "effort-switcher";
+        const name = "ui-rheostat";
         // LOCAL PATCH (2026-10-06): DSH 0.2.0-rc.2 builds the seat's directory with
         // `new ModelDirectory(this.ctx.remote.session, ...)` inside
         // ModelDirectoryResolver.directoryFor(); resolving `remote.session` is gated on
@@ -16,15 +16,15 @@ window.__ModuleLoader__.load({
         const slotName = "conversation.input.model";
 
         const css = `
-/* Effort switcher seat — restyled to DSH's own menu language
+/* Reasoning-effort seat — restyled to DSH's own menu language
    (radius/elevation/backdrop tokens + the 13px/34px row metrics used by
    @deepseek-ai/dsh-client-ui-model-selection/ModelSelect.module.css). */
-.dsh-es-root {
+.dsh-rheo-root {
     position: relative;
     display: inline-flex;
     min-width: 0;
 }
-.dsh-es-trigger {
+.dsh-rheo-trigger {
     min-width: 0;
     max-width: min(280px, 45cqw);
     height: 28px;
@@ -43,24 +43,24 @@ window.__ModuleLoader__.load({
     display: flex;
     transition: background .15s ease, color .15s ease;
 }
-.dsh-es-trigger:hover:not(:disabled) {
+.dsh-rheo-trigger:hover:not(:disabled) {
     background: var(--dsw-alias-interactive-bg-hover);
     color: var(--dsw-alias-label-primary);
 }
-.dsh-es-trigger:focus-visible {
+.dsh-rheo-trigger:focus-visible {
     box-shadow: 0 0 0 2px var(--dsw-focus-ring-color, var(--dsw-alias-state-business-primary));
 }
-.dsh-es-trigger:disabled {
+.dsh-rheo-trigger:disabled {
     color: var(--dsw-alias-label-dimmed);
     cursor: default;
 }
-.dsh-es-triggerLabel {
+.dsh-rheo-triggerLabel {
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
     overflow: hidden;
 }
-.dsh-es-triggerDot {
+.dsh-rheo-triggerDot {
     flex: none;
     width: 3px;
     height: 3px;
@@ -68,22 +68,22 @@ window.__ModuleLoader__.load({
     background: currentColor;
     opacity: .4;
 }
-.dsh-es-triggerEffort {
+.dsh-rheo-triggerEffort {
     color: var(--dsw-alias-label-caption);
     flex: none;
 }
-.dsh-es-chevron {
+.dsh-rheo-chevron {
     color: var(--dsw-alias-label-caption);
     flex: none;
     transition: transform .18s ease;
 }
-.dsh-es-chevronOpen {
+.dsh-rheo-chevronOpen {
     transform: rotate(180deg);
 }
-.dsh-es-chevronBack {
+.dsh-rheo-chevronBack {
     transform: rotate(180deg);
 }
-.dsh-es-menu {
+.dsh-rheo-menu {
     --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);
     z-index: 1100;
     box-sizing: border-box;
@@ -102,16 +102,16 @@ window.__ModuleLoader__.load({
     box-shadow: var(--dsw-elevation-prominent);
     color: var(--dsw-alias-label-primary);
     overflow: hidden;
-    animation: dsh-es-pop .14s ease-out;
+    animation: dsh-rheo-pop .14s ease-out;
 }
-.dsh-es-paneHead {
+.dsh-rheo-paneHead {
     display: flex;
     align-items: center;
     gap: 4px;
     flex: none;
     padding: 0 2px 4px;
 }
-.dsh-es-back {
+.dsh-rheo-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -126,11 +126,11 @@ window.__ModuleLoader__.load({
     cursor: pointer;
     transition: background .15s ease, color .15s ease;
 }
-.dsh-es-back:hover {
+.dsh-rheo-back:hover {
     background: var(--dsw-alias-interactive-bg-hover);
     color: var(--dsw-alias-label-primary);
 }
-.dsh-es-paneTitle {
+.dsh-rheo-paneTitle {
     flex: 1 1 auto;
     min-width: 0;
     color: var(--dsw-alias-label-primary);
@@ -138,7 +138,7 @@ window.__ModuleLoader__.load({
     font-weight: 500;
     line-height: 18px;
 }
-.dsh-es-modelRow {
+.dsh-rheo-modelRow {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -154,16 +154,16 @@ window.__ModuleLoader__.load({
     cursor: pointer;
     transition: background .15s ease;
 }
-.dsh-es-modelRow:hover {
+.dsh-rheo-modelRow:hover {
     background: var(--dsw-alias-interactive-bg-hover);
 }
-.dsh-es-modelRowLabel {
+.dsh-rheo-modelRowLabel {
     flex: none;
     color: var(--dsw-alias-label-tertiary);
     font-size: 12px;
     line-height: 18px;
 }
-.dsh-es-modelRowValue {
+.dsh-rheo-modelRowValue {
     flex: 1 1 auto;
     min-width: 0;
     text-overflow: ellipsis;
@@ -175,7 +175,7 @@ window.__ModuleLoader__.load({
     line-height: 18px;
     text-align: right;
 }
-.dsh-es-modelList {
+.dsh-rheo-modelList {
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -187,17 +187,17 @@ window.__ModuleLoader__.load({
     scrollbar-width: thin;
     scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) transparent;
 }
-.dsh-es-modelList::-webkit-scrollbar {
+.dsh-rheo-modelList::-webkit-scrollbar {
     width: 8px;
 }
-.dsh-es-modelList::-webkit-scrollbar-thumb {
+.dsh-rheo-modelList::-webkit-scrollbar-thumb {
     border-radius: 999px;
     background: var(--dsw-alias-scrollbar-bg-l2);
 }
-.dsh-es-modelList::-webkit-scrollbar-thumb:hover {
+.dsh-rheo-modelList::-webkit-scrollbar-thumb:hover {
     background: var(--dsw-alias-scrollbar-hover-l2);
 }
-.dsh-es-menuGroup {
+.dsh-rheo-menuGroup {
     flex: none;
     padding: 6px 8px 3px;
     color: var(--dsw-alias-label-tertiary);
@@ -205,7 +205,7 @@ window.__ModuleLoader__.load({
     font-weight: 500;
     line-height: 16px;
 }
-.dsh-es-menuItem {
+.dsh-rheo-menuItem {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -221,27 +221,27 @@ window.__ModuleLoader__.load({
     cursor: pointer;
     transition: background .15s ease;
 }
-.dsh-es-menuItem:hover {
+.dsh-rheo-menuItem:hover {
     background: var(--dsw-alias-interactive-bg-hover);
 }
-.dsh-es-menuItemActive {
+.dsh-rheo-menuItemActive {
     background: var(--dsw-alias-interactive-bg-hover);
 }
-.dsh-es-menuItemBlocked {
+.dsh-rheo-menuItemBlocked {
     color: var(--dsw-alias-label-tertiary);
     cursor: not-allowed;
 }
-.dsh-es-menuItemBlocked:hover {
+.dsh-rheo-menuItemBlocked:hover {
     background: var(--dsw-alias-interactive-bg-hover);
 }
-.dsh-es-menuItemBody {
+.dsh-rheo-menuItemBody {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
     gap: 1px;
     min-width: 0;
 }
-.dsh-es-menuItemName {
+.dsh-rheo-menuItemName {
     color: var(--dsw-alias-label-primary);
     font-size: 13px;
     line-height: 18px;
@@ -249,10 +249,10 @@ window.__ModuleLoader__.load({
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.dsh-es-menuItemActive .dsh-es-menuItemName {
+.dsh-rheo-menuItemActive .dsh-rheo-menuItemName {
     font-weight: 500;
 }
-.dsh-es-menuItemDesc {
+.dsh-rheo-menuItemDesc {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -261,13 +261,13 @@ window.__ModuleLoader__.load({
     line-height: 15px;
     overflow: hidden;
 }
-.dsh-es-menuItemCheck {
+.dsh-rheo-menuItemCheck {
     flex: none;
     width: 14px;
     height: 14px;
     color: var(--dsw-alias-state-info-primary);
 }
-.dsh-es-menuItemNotice {
+.dsh-rheo-menuItemNotice {
     position: relative;
     flex: none;
     display: inline-flex;
@@ -277,7 +277,7 @@ window.__ModuleLoader__.load({
     height: 16px;
     color: var(--dsw-alias-state-warn-label, var(--dsw-alias-label-tertiary));
 }
-.dsh-es-menuItemTip {
+.dsh-rheo-menuItemTip {
     --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);
     z-index: 1200;
     position: fixed;
@@ -295,13 +295,13 @@ window.__ModuleLoader__.load({
     white-space: normal;
     pointer-events: none;
 }
-.dsh-es-menuStatus, .dsh-es-menuEmpty {
+.dsh-rheo-menuStatus, .dsh-rheo-menuEmpty {
     color: var(--dsw-alias-label-tertiary);
     padding: 8px;
     font-size: 12px;
     line-height: 18px;
 }
-.dsh-es-menuError {
+.dsh-rheo-menuError {
     border-radius: var(--dsw-radius-md);
     background: var(--dsw-alias-interactive-bg-hover-danger);
     color: var(--dsw-alias-state-error-primary);
@@ -310,20 +310,20 @@ window.__ModuleLoader__.load({
     font-size: 11px;
     line-height: 16px;
 }
-.dsh-es-menuDivider {
+.dsh-rheo-menuDivider {
     flex: none;
     height: 1px;
     margin: 4px 6px;
     background: var(--dsw-alias-border-l1);
 }
-.dsh-es-sliderWrap {
+.dsh-rheo-sliderWrap {
     display: flex;
     flex-direction: column;
     flex: none;
     gap: 2px;
     padding: 4px 8px 6px;
 }
-.dsh-es-sliderHead {
+.dsh-rheo-sliderHead {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -332,17 +332,17 @@ window.__ModuleLoader__.load({
     font-size: 12px;
     line-height: 18px;
 }
-.dsh-es-sliderHead strong {
+.dsh-rheo-sliderHead strong {
     color: var(--dsw-alias-label-primary);
     font-size: 13px;
     font-weight: 500;
 }
-.dsh-es-sliderRail {
+.dsh-rheo-sliderRail {
     position: relative;
     height: 38px;
     margin: 4px 0 2px;
 }
-.dsh-es-sliderGroove {
+.dsh-rheo-sliderGroove {
     position: absolute;
     top: 50%;
     right: 0;
@@ -353,13 +353,13 @@ window.__ModuleLoader__.load({
     transform: translateY(-50%);
     pointer-events: none;
 }
-.dsh-es-sliderTrack {
+.dsh-rheo-sliderTrack {
     position: absolute;
     inset: 0;
     background: var(--dsw-alias-interactive-bg-hover);
     border-radius: inherit;
 }
-.dsh-es-sliderFill {
+.dsh-rheo-sliderFill {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -370,7 +370,7 @@ window.__ModuleLoader__.load({
     background: linear-gradient(90deg, #4f8cff 0%, #7b6cff 100%);
     transition: width .28s ease;
 }
-.dsh-es-sliderBloom {
+.dsh-rheo-sliderBloom {
     position: absolute;
     inset: 0;
     overflow: hidden;
@@ -378,30 +378,30 @@ window.__ModuleLoader__.load({
     opacity: 0;
     transition: opacity .28s ease;
 }
-.dsh-es-sliderFillMax .dsh-es-sliderBloom {
+.dsh-rheo-sliderFillMax .dsh-rheo-sliderBloom {
     opacity: 1;
 }
-.dsh-es-particles {
+.dsh-rheo-particles {
     position: absolute;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
     container-type: inline-size;
 }
-.dsh-es-particle {
+.dsh-rheo-particle {
     position: absolute;
-    top: var(--dsh-es-particle-top, 50%);
+    top: var(--dsh-rheo-particle-top, 50%);
     left: 100%;
-    width: var(--dsh-es-particle-w, 7px);
-    height: var(--dsh-es-particle-h, 3px);
-    margin-top: calc(var(--dsh-es-particle-h, 3px) / -2);
+    width: var(--dsh-rheo-particle-w, 7px);
+    height: var(--dsh-rheo-particle-h, 3px);
+    margin-top: calc(var(--dsh-rheo-particle-h, 3px) / -2);
     border-radius: 999px;
-    background: linear-gradient(90deg, rgb(255 255 255 / var(--dsh-es-particle-opacity, .8)) 0%, rgb(255 255 255 / 0%) 100%);
+    background: linear-gradient(90deg, rgb(255 255 255 / var(--dsh-rheo-particle-opacity, .8)) 0%, rgb(255 255 255 / 0%) 100%);
     box-shadow: 0 0 5px rgb(255 255 255 / 45%);
-    animation: dsh-es-particle-drift var(--dsh-es-particle-duration, 2.4s) linear infinite;
-    animation-delay: var(--dsh-es-particle-delay, 0s);
+    animation: dsh-rheo-particle-drift var(--dsh-rheo-particle-duration, 2.4s) linear infinite;
+    animation-delay: var(--dsh-rheo-particle-delay, 0s);
 }
-@keyframes dsh-es-particle-drift {
+@keyframes dsh-rheo-particle-drift {
     from {
         transform: translateX(0);
     }
@@ -410,12 +410,12 @@ window.__ModuleLoader__.load({
     }
 }
 @media (prefers-reduced-motion: reduce) {
-    .dsh-es-particle {
+    .dsh-rheo-particle {
         animation: none;
         opacity: 0;
     }
 }
-.dsh-es-sliderKnob {
+.dsh-rheo-sliderKnob {
     position: absolute;
     z-index: 4;
     top: 50%;
@@ -426,7 +426,7 @@ window.__ModuleLoader__.load({
     pointer-events: none;
     transition: left .28s ease;
 }
-.dsh-es-sliderKnobFace {
+.dsh-rheo-sliderKnobFace {
     width: 100%;
     height: 100%;
     border-radius: 50%;
@@ -434,13 +434,13 @@ window.__ModuleLoader__.load({
     box-shadow: 0 0 0 .5px rgb(0 0 0 / 16%), 0 1px 3px rgb(0 0 0 / 32%);
     transition: transform .14s ease, box-shadow .14s ease;
 }
-.dsh-es-sliderRail:hover .dsh-es-sliderKnobFace {
+.dsh-rheo-sliderRail:hover .dsh-rheo-sliderKnobFace {
     transform: scale(1.12);
 }
-.dsh-es-sliderRail:has(.dsh-es-slider:focus-visible) .dsh-es-sliderKnobFace {
+.dsh-rheo-sliderRail:has(.dsh-rheo-slider:focus-visible) .dsh-rheo-sliderKnobFace {
     box-shadow: 0 0 0 2px var(--dsw-focus-ring-color, var(--dsw-alias-state-business-primary)), 0 1px 3px rgb(0 0 0 / 32%);
 }
-.dsh-es-sliderTicks {
+.dsh-rheo-sliderTicks {
     position: absolute;
     z-index: 2;
     top: 50%;
@@ -452,16 +452,16 @@ window.__ModuleLoader__.load({
     transform: translateY(-50%);
     pointer-events: none;
 }
-.dsh-es-sliderTick {
+.dsh-rheo-sliderTick {
     width: 5px;
     height: 5px;
     border-radius: 50%;
     background: var(--dsw-alias-label-dimmed);
 }
-.dsh-es-sliderTickActive {
+.dsh-rheo-sliderTickActive {
     background: rgb(255 255 255 / 44%);
 }
-.dsh-es-slider {
+.dsh-rheo-slider {
     -webkit-appearance: none;
     appearance: none;
     position: absolute;
@@ -479,17 +479,17 @@ window.__ModuleLoader__.load({
     cursor: pointer;
     outline: none;
 }
-.dsh-es-slider:disabled {
+.dsh-rheo-slider:disabled {
     cursor: wait;
     opacity: .55;
 }
-.dsh-es-slider::-webkit-slider-runnable-track {
+.dsh-rheo-slider::-webkit-slider-runnable-track {
     height: 24px;
     border: none;
     border-radius: 999px;
     background: transparent;
 }
-.dsh-es-slider::-webkit-slider-thumb {
+.dsh-rheo-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     box-sizing: border-box;
@@ -502,13 +502,13 @@ window.__ModuleLoader__.load({
     box-shadow: none;
     cursor: pointer;
 }
-.dsh-es-slider::-moz-range-track, .dsh-es-slider::-moz-range-progress {
+.dsh-rheo-slider::-moz-range-track, .dsh-rheo-slider::-moz-range-progress {
     height: 24px;
     border: none;
     border-radius: 999px;
     background: transparent;
 }
-.dsh-es-slider::-moz-range-thumb {
+.dsh-rheo-slider::-moz-range-thumb {
     box-sizing: border-box;
     width: 30px;
     height: 30px;
@@ -518,13 +518,13 @@ window.__ModuleLoader__.load({
     box-shadow: none;
     cursor: pointer;
 }
-.dsh-es-sliderDesc {
+.dsh-rheo-sliderDesc {
     margin: 0;
     color: var(--dsw-alias-label-tertiary);
     font-size: 11px;
     line-height: 16px;
 }
-@keyframes dsh-es-pop {
+@keyframes dsh-rheo-pop {
     from {
         opacity: 0;
         transform: translateY(4px) scale(.985);
@@ -538,10 +538,10 @@ window.__ModuleLoader__.load({
 
         // Inject styles at module load, exactly like the original ModelSelect
         // bundle does — the client sandbox may not run effect callbacks.
-        const STYLE_TAG_ID = "dsh-effort-switcher/seat.css";
+        const STYLE_TAG_ID = "dsh-ui-rheostat/seat.css";
         if (typeof document !== "undefined" && document.querySelector(`style[data-plugin-css=${JSON.stringify(STYLE_TAG_ID)}]`) === null) {
             const tag = document.createElement("style");
-            tag.dataset.plugin = "dsh-effort-switcher";
+            tag.dataset.plugin = "dsh-ui-rheostat";
             tag.dataset.pluginCss = STYLE_TAG_ID;
             tag.textContent = css;
             document.head.appendChild(tag);
@@ -728,7 +728,7 @@ function knownTextOnlyModel(provider, model) {
                 setDraft(Number(event.currentTarget.value));
             };
 
-            // CSS hover on .dsh-es-sliderRail now handles knob scaling.
+            // CSS hover on .dsh-rheo-sliderRail now handles knob scaling.
 
             // Commit the live thumb value on release. Keep the local pin until
             // the store catches up so the knob does not snap back.
@@ -766,7 +766,7 @@ function knownTextOnlyModel(provider, model) {
 
             // Secondary menu: model picker, shown when the model row is clicked.
             if (state.groups.length === 0 && state.status !== "loading" && !initialLoading) {
-                console.warn("[effort-switcher] no available models", {
+                console.warn("[ui-rheostat] no available models", {
                     status: state.status,
                     initialLoading,
                     error: state.error,
@@ -774,15 +774,15 @@ function knownTextOnlyModel(provider, model) {
                 });
             }
             const modelList = (state.status === "loading" || initialLoading) && state.groups.length === 0
-                ? react.createElement("div", { className: "dsh-es-menuStatus" }, "加载中…")
+                ? react.createElement("div", { className: "dsh-rheo-menuStatus" }, "加载中…")
                 : state.groups.length === 0
                     ? state.error
-                        ? react.createElement("div", { className: "dsh-es-menuError" }, state.error)
-                        : react.createElement("div", { className: "dsh-es-menuEmpty" }, "没有可用的模型。")
+                        ? react.createElement("div", { className: "dsh-rheo-menuError" }, state.error)
+                        : react.createElement("div", { className: "dsh-rheo-menuEmpty" }, "没有可用的模型。")
                     : state.groups.map((group) => react.createElement(
                         react.Fragment,
                         { key: group.id },
-                        react.createElement("div", { className: "dsh-es-menuGroup" }, group.name),
+                        react.createElement("div", { className: "dsh-rheo-menuGroup" }, group.name),
                         group.models.map((model) => {
                             const active = state.current?.provider === group.id && state.current.model === model.id;
                             const failedReason = blockedModels[modelKey(group.id, model.id)];
@@ -798,26 +798,26 @@ function knownTextOnlyModel(provider, model) {
                                     role: "menuitemradio",
                                     "aria-checked": active,
                                     className: [
-                                        "dsh-es-menuItem",
-                                        active ? "dsh-es-menuItemActive" : "",
-                                        blocked ? "dsh-es-menuItemBlocked" : ""
+                                        "dsh-rheo-menuItem",
+                                        active ? "dsh-rheo-menuItemActive" : "",
+                                        blocked ? "dsh-rheo-menuItemBlocked" : ""
                                     ].filter(Boolean).join(" "),
                                     "aria-disabled": blocked,
                                     onClick: () => chooseModel(group, model)
                                 },
                                 react.createElement(
                                     "span",
-                                    { className: "dsh-es-menuItemBody" },
-                                    react.createElement("span", { className: "dsh-es-menuItemName" }, model.name),
+                                    { className: "dsh-rheo-menuItemBody" },
+                                    react.createElement("span", { className: "dsh-rheo-menuItemName" }, model.name),
                                     model.description !== void 0
-                                        ? react.createElement("span", { className: "dsh-es-menuItemDesc" }, model.description)
+                                        ? react.createElement("span", { className: "dsh-rheo-menuItemDesc" }, model.description)
                                         : null
                                 ),
                                 warned
                                     ? react.createElement(
                                         "span",
                                         {
-                                            className: "dsh-es-menuItemNotice",
+                                            className: "dsh-rheo-menuItemNotice",
                                             tabIndex: 0,
                                             onMouseEnter: (event) => {
                                                 const box = event.currentTarget.getBoundingClientRect();
@@ -832,7 +832,7 @@ function knownTextOnlyModel(provider, model) {
                                         warningIcon()
                                     )
                                     : active
-                                        ? checkIcon("dsh-es-menuItemCheck")
+                                        ? checkIcon("dsh-rheo-menuItemCheck")
                                         : null
                             );
                         })
@@ -862,34 +862,34 @@ function knownTextOnlyModel(provider, model) {
             const slider = currentChoice !== undefined && levels.length > 0
                 ? react.createElement(
                     "div",
-                    { className: "dsh-es-sliderWrap" },
+                    { className: "dsh-rheo-sliderWrap" },
                     react.createElement(
                         "div",
-                        { className: "dsh-es-sliderHead" },
+                        { className: "dsh-rheo-sliderHead" },
                         react.createElement("span", null, "推理强度"),
                         react.createElement("strong", null, displayedLevel?.name ?? currentEffort)
                     ),
                     react.createElement(
                         "div",
-                        { className: "dsh-es-sliderRail" },
+                        { className: "dsh-rheo-sliderRail" },
                         react.createElement(
                             "div",
-                            { className: "dsh-es-sliderGroove", "aria-hidden": true },
-                            react.createElement("div", { className: "dsh-es-sliderTrack" }),
+                            { className: "dsh-rheo-sliderGroove", "aria-hidden": true },
+                            react.createElement("div", { className: "dsh-rheo-sliderTrack" }),
                             react.createElement("div", {
-                                className: atMax ? "dsh-es-sliderFill dsh-es-sliderFillMax" : "dsh-es-sliderFill",
+                                className: atMax ? "dsh-rheo-sliderFill dsh-rheo-sliderFillMax" : "dsh-rheo-sliderFill",
                                 style: { width: fillWidth }
-                            }, react.createElement("div", { className: "dsh-es-sliderBloom" }), atMax
-                                ? react.createElement("div", { className: "dsh-es-particles", "aria-hidden": true }, PARTICLE_SPECS.map((spec, index) => react.createElement("span", {
+                            }, react.createElement("div", { className: "dsh-rheo-sliderBloom" }), atMax
+                                ? react.createElement("div", { className: "dsh-rheo-particles", "aria-hidden": true }, PARTICLE_SPECS.map((spec, index) => react.createElement("span", {
                                     key: index,
-                                    className: "dsh-es-particle",
+                                    className: "dsh-rheo-particle",
                                     style: {
-                                        "--dsh-es-particle-w": spec.w + "px",
-                                        "--dsh-es-particle-h": spec.h + "px",
-                                        "--dsh-es-particle-top": spec.top + "%",
-                                        "--dsh-es-particle-opacity": spec.opacity,
-                                        "--dsh-es-particle-duration": spec.duration + "s",
-                                        "--dsh-es-particle-delay": spec.delay + "s"
+                                        "--dsh-rheo-particle-w": spec.w + "px",
+                                        "--dsh-rheo-particle-h": spec.h + "px",
+                                        "--dsh-rheo-particle-top": spec.top + "%",
+                                        "--dsh-rheo-particle-opacity": spec.opacity,
+                                        "--dsh-rheo-particle-duration": spec.duration + "s",
+                                        "--dsh-rheo-particle-delay": spec.delay + "s"
                                     }
                                 })))
                                 : null)
@@ -897,22 +897,22 @@ function knownTextOnlyModel(provider, model) {
                         react.createElement(
                             "div",
                             {
-                                className: "dsh-es-sliderKnob",
+                                className: "dsh-rheo-sliderKnob",
                                 "aria-hidden": true,
                                 style: { left: knobLeft }
                             },
-                            react.createElement("div", { className: "dsh-es-sliderKnobFace" })
+                            react.createElement("div", { className: "dsh-rheo-sliderKnobFace" })
                         ),
                         react.createElement(
                             "div",
-                            { className: "dsh-es-sliderTicks", "aria-hidden": true },
+                            { className: "dsh-rheo-sliderTicks", "aria-hidden": true },
                             levels.map((level, index) => react.createElement("span", {
                                 key: level.id,
-                                className: index <= displayedIndex ? "dsh-es-sliderTick dsh-es-sliderTickActive" : "dsh-es-sliderTick"
+                                className: index <= displayedIndex ? "dsh-rheo-sliderTick dsh-rheo-sliderTickActive" : "dsh-rheo-sliderTick"
                             }))
                         ),
                         react.createElement("input", {
-                            className: "dsh-es-slider",
+                            className: "dsh-rheo-slider",
                             type: "range",
                             min: 0,
                             max: Math.max(levels.length - 1, 0),
@@ -928,7 +928,7 @@ function knownTextOnlyModel(provider, model) {
                         })
                     ),
                     displayedLevel?.description
-                        ? react.createElement("p", { className: "dsh-es-sliderDesc" }, displayedLevel.description)
+                        ? react.createElement("p", { className: "dsh-rheo-sliderDesc" }, displayedLevel.description)
                         : null
                 )
                 : null;
@@ -939,7 +939,7 @@ function knownTextOnlyModel(provider, model) {
                 "div",
                 {
                     ref: panelRef,
-                    className: "dsh-es-menu",
+                    className: "dsh-rheo-menu",
                     role: "menu",
                     style: { position: "absolute", bottom: "calc(100% + 8px)", right: "0" }
                 },
@@ -949,20 +949,20 @@ function knownTextOnlyModel(provider, model) {
                         null,
                         react.createElement(
                             "div",
-                            { className: "dsh-es-paneHead" },
+                            { className: "dsh-rheo-paneHead" },
                             react.createElement(
                                 "button",
                                 {
                                     type: "button",
-                                    className: "dsh-es-back",
+                                    className: "dsh-rheo-back",
                                     "aria-label": "返回",
                                     onClick: () => setModelsOpen(false)
                                 },
-                                chevronIcon(ICON_CHEVRON_RIGHT, "dsh-es-chevron dsh-es-chevronBack")
+                                chevronIcon(ICON_CHEVRON_RIGHT, "dsh-rheo-chevron dsh-rheo-chevronBack")
                             ),
-                            react.createElement("span", { className: "dsh-es-paneTitle" }, "选择模型")
+                            react.createElement("span", { className: "dsh-rheo-paneTitle" }, "选择模型")
                         ),
-                        react.createElement("div", { className: "dsh-es-modelList" }, modelList)
+                        react.createElement("div", { className: "dsh-rheo-modelList" }, modelList)
                     )
                     : react.createElement(
                         react.Fragment,
@@ -971,21 +971,21 @@ function knownTextOnlyModel(provider, model) {
                             "button",
                             {
                                 type: "button",
-                                className: "dsh-es-modelRow",
+                                className: "dsh-rheo-modelRow",
                                 "aria-haspopup": "menu",
                                 "aria-expanded": modelsOpen,
                                 onClick: () => setModelsOpen(true)
                             },
-                            react.createElement("span", { className: "dsh-es-modelRowLabel" }, "模型"),
-                            react.createElement("span", { className: "dsh-es-modelRowValue" }, currentChoice?.model.name ?? "—"),
-                            chevronIcon(ICON_CHEVRON_RIGHT, "dsh-es-chevron")
+                            react.createElement("span", { className: "dsh-rheo-modelRowLabel" }, "模型"),
+                            react.createElement("span", { className: "dsh-rheo-modelRowValue" }, currentChoice?.model.name ?? "—"),
+                            chevronIcon(ICON_CHEVRON_RIGHT, "dsh-rheo-chevron")
                         ),
                         slider === null
                             ? null
                             : react.createElement(
                                 react.Fragment,
                                 null,
-                                react.createElement("div", { className: "dsh-es-menuDivider" }),
+                                react.createElement("div", { className: "dsh-rheo-menuDivider" }),
                                 slider
                             )
                     )
@@ -994,7 +994,7 @@ function knownTextOnlyModel(provider, model) {
             return react.createElement(
                 "div",
                 {
-                    className: "dsh-es-root",
+                    className: "dsh-rheo-root",
                     "data-dsh-plugin": name,
                     ref: rootRef,
                     style: { position: "relative", display: "inline-flex" },
@@ -1009,7 +1009,7 @@ function knownTextOnlyModel(provider, model) {
                     {
                         ref: triggerRef,
                         type: "button",
-                        className: "dsh-es-trigger",
+                        className: "dsh-rheo-trigger",
                         "aria-label": fullLabel,
                         "aria-haspopup": "menu",
                         "aria-expanded": open,
@@ -1020,21 +1020,21 @@ function knownTextOnlyModel(provider, model) {
                             setModelsOpen(false);
                         }
                     },
-                    react.createElement("span", { className: "dsh-es-triggerLabel" }, modelLabel),
+                    react.createElement("span", { className: "dsh-rheo-triggerLabel" }, modelLabel),
                     effortLabel !== undefined
-                        ? react.createElement("span", { className: "dsh-es-triggerDot", "aria-hidden": true })
+                        ? react.createElement("span", { className: "dsh-rheo-triggerDot", "aria-hidden": true })
                         : null,
                     effortLabel !== undefined
-                        ? react.createElement("span", { className: "dsh-es-triggerEffort" }, effortLabel)
+                        ? react.createElement("span", { className: "dsh-rheo-triggerEffort" }, effortLabel)
                         : null,
-                    chevronIcon(ICON_CHEVRON_DOWN, open ? "dsh-es-chevron dsh-es-chevronOpen" : "dsh-es-chevron")
+                    chevronIcon(ICON_CHEVRON_DOWN, open ? "dsh-rheo-chevron dsh-rheo-chevronOpen" : "dsh-rheo-chevron")
                 ),
                 menu,
                 hoveredNotice
                     ? react.createElement(
                         "div",
                         {
-                            className: "dsh-es-menuItemTip",
+                            className: "dsh-rheo-menuItemTip",
                             role: "tooltip",
                             style: {
                                 left: `${hoveredNotice.left}px`,
@@ -1061,7 +1061,7 @@ function knownTextOnlyModel(provider, model) {
                         const directory = models.directoryFor(sessionId);
                         const available = sessions.subagentAddress(sessionId) === void 0;
                         const snapshot = directory.store?.getSnapshot?.();
-                        console.log("[effort-switcher] directory", {
+                        console.log("[ui-rheostat] directory", {
                             sessionId,
                             available,
                             status: snapshot?.status,
@@ -1086,7 +1086,7 @@ function knownTextOnlyModel(provider, model) {
         const Config = {
             "~standard": {
                 version: 1,
-                vendor: "dsh-effort-switcher",
+                vendor: "dsh-ui-rheostat",
                 validate(config) {
                     if (config === undefined || config === null) return { value: {} };
                     if (typeof config !== "object" || Array.isArray(config)) {

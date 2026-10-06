@@ -183,41 +183,54 @@ vm.runInContext(source, context, { filename: "index.js" });
 if (!captured) throw new Error("client module did not register");
 
 // 0. Styles must be injected at module load (original bundles do this at top level)
-const styleTag = styleTags.find((tag) => tag.dataset.pluginCss === "dsh-effort-switcher/seat.css");
+const styleTag = styleTags.find((tag) => tag.dataset.pluginCss === "dsh-ui-rheostat/seat.css");
 if (!styleTag) throw new Error("style tag not injected at module load");
-if (!styleTag.textContent.includes("border-radius: 22px")) throw new Error("trigger radius missing from injected css");
+// NOTE: the literals below are pinned to the shipped stylesheet in index.js and to the
+// documented tuning values in LOCAL-PATCH.md (groove 24px, .28s easing, #4f8cff ramp,
+// themed thin scrollbar). When the stylesheet is retuned, update both together.
+if (!styleTag.textContent.includes("border-radius: var(--dsw-radius-sm)")) {
+    throw new Error("trigger radius token missing from injected css");
+}
 if (!styleTag.textContent.includes("--dsw-alias-label-secondary")) throw new Error("dsh tokens missing from injected css");
-if (!styleTag.textContent.includes("scrollbar-width: none")) throw new Error("scrollbar must be hidden");
-if (!styleTag.textContent.includes("::-webkit-scrollbar")) throw new Error("webkit scrollbar hide rule missing");
+if (!styleTag.textContent.includes("scrollbar-width: thin")) throw new Error("model list must use the themed thin scrollbar");
+if (!styleTag.textContent.includes("scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) transparent")) {
+    throw new Error("model list scrollbar must be themed");
+}
+if (!styleTag.textContent.includes("::-webkit-scrollbar")) throw new Error("webkit scrollbar rule missing");
 if (!styleTag.textContent.includes("-webkit-slider-thumb")) throw new Error("slider thumb style missing");
 if (!styleTag.textContent.includes("::-moz-range-progress")) throw new Error("firefox slider progress style missing");
-if (!styleTag.textContent.includes("dsh-es-pop")) throw new Error("pop animation missing from css");
-if (!styleTag.textContent.includes("height: 26px")) throw new Error("slider track must be 26px tall");
+if (!styleTag.textContent.includes("dsh-rheo-pop")) throw new Error("pop animation missing from css");
+if (!styleTag.textContent.includes("height: 24px")) throw new Error("slider groove must be 24px tall");
 if (!styleTag.textContent.includes("width: 30px")) throw new Error("slider thumb must be 30px wide");
-if (!styleTag.textContent.includes(".dsh-es-sliderKnob")) throw new Error("custom thumb knob missing");
-if (!styleTag.textContent.includes("transition: left .315s ease")) throw new Error("thumb must ease between notches at the last-notch pace");
-if (!styleTag.textContent.includes("transition: width .315s ease")) {
-    throw new Error("fill must ease with the thumb at the last-notch pace");
+if (!styleTag.textContent.includes(".dsh-rheo-sliderKnob")) throw new Error("custom thumb knob missing");
+if (!styleTag.textContent.includes("transition: left .28s ease")) throw new Error("thumb must ease between notches");
+if (!styleTag.textContent.includes("transition: width .28s ease")) {
+    throw new Error("fill must ease with the thumb");
 }
-if (!styleTag.textContent.includes(".dsh-es-sliderBloom")) {
+if (!styleTag.textContent.includes(".dsh-rheo-sliderBloom")) {
     throw new Error("terminal color must fade on a dedicated bloom layer");
 }
-if (!styleTag.textContent.includes("transition: opacity .315s ease")) {
-    throw new Error("bloom color fade must be slower than the thumb travel");
+if (!styleTag.textContent.includes("transition: opacity .28s ease")) {
+    throw new Error("bloom color must fade on the bloom layer");
 }
-if ((styleTag.textContent.match(/background: rgb\(255 255 255 \/ 38%\)/g) || []).length < 2) {
-    throw new Error("inactive and active slider dots must share the same subdued style");
+if (!styleTag.textContent.includes("background: var(--dsw-alias-label-dimmed)")) {
+    throw new Error("inactive slider dots must use the dimmed token");
 }
-if (!styleTag.textContent.includes("background: #4c8dff")) throw new Error("fill must use the reference blue");
-if (!styleTag.textContent.includes("linear-gradient(90deg, #4c8dff 0%, #7b6cff 52%, #b56bff 100%)")) {
-    throw new Error("last notch must use the blue-to-purple reference gradient");
+if (!styleTag.textContent.includes("background: rgb(255 255 255 / 44%)")) {
+    throw new Error("traversed slider dots must use the subdued white");
 }
-const thumbBlock = styleTag.textContent.match(/\.dsh-es-slider::-webkit-slider-thumb\s*\{[^}]*\}/)?.[0] ?? "";
+if (!styleTag.textContent.includes("linear-gradient(90deg, #4f8cff 0%, #7b6cff 100%)")) {
+    throw new Error("fill must use the blue-to-purple reference gradient");
+}
+if (!styleTag.textContent.includes("linear-gradient(90deg, #4f8cff 0%, #7b6cff 52%, #b56bff 100%)")) {
+    throw new Error("last notch must reveal the three-stop bloom gradient");
+}
+const thumbBlock = styleTag.textContent.match(/\.dsh-rheo-slider::-webkit-slider-thumb\s*\{[^}]*\}/)?.[0] ?? "";
 if (thumbBlock.includes("border: 1px solid")) throw new Error("thumb must not have a colored ring");
-if (!styleTag.textContent.includes(".dsh-es-sliderRail")) throw new Error("slider must render a dedicated rail layer");
-if (!styleTag.textContent.includes(".dsh-es-sliderGroove")) throw new Error("fill must be clipped by a rounded groove");
-if (!styleTag.textContent.includes(".dsh-es-sliderFill")) throw new Error("slider must render a dedicated fill layer");
-if (!styleTag.textContent.includes(".dsh-es-sliderTicks")) throw new Error("slider must render embedded notch markers");
+if (!styleTag.textContent.includes(".dsh-rheo-sliderRail")) throw new Error("slider must render a dedicated rail layer");
+if (!styleTag.textContent.includes(".dsh-rheo-sliderGroove")) throw new Error("fill must be clipped by a rounded groove");
+if (!styleTag.textContent.includes(".dsh-rheo-sliderFill")) throw new Error("slider must render a dedicated fill layer");
+if (!styleTag.textContent.includes(".dsh-rheo-sliderTicks")) throw new Error("slider must render embedded notch markers");
 if (!styleTag.textContent.includes("z-index: 3")) throw new Error("native input must sit above the visual rail");
 if (!styleTag.textContent.includes("accent-color: transparent")) throw new Error("native slider accent must not paint leftover fill");
 
@@ -242,7 +255,7 @@ function findRange(node) {
     return find(node, (n) => n.props?.type === "range");
 }
 function findSliderFill(node) {
-    return find(node, (n) => String(n.props?.className ?? "").split(/\s+/).includes("dsh-es-sliderFill"));
+    return find(node, (n) => String(n.props?.className ?? "").split(/\s+/).includes("dsh-rheo-sliderFill"));
 }
 function text(node) {
     if (node === null || node === undefined) return "";
@@ -278,7 +291,7 @@ let tree = registered.component({
     load: face.load,
     select: face.select
 });
-if (!tree || tree.props["data-dsh-plugin"] !== "effort-switcher") throw new Error("root element missing");
+if (!tree || tree.props["data-dsh-plugin"] !== "ui-rheostat") throw new Error("root element missing");
 if (findRange(tree)) throw new Error("slider must not render while menu is closed");
 const trigger = tree.children[0];
 const triggerLabel = text(trigger);
@@ -286,8 +299,8 @@ if (!triggerLabel.includes("Reasoning Model") || !triggerLabel.includes("低")) 
     throw new Error(`trigger should show model + effort, got: ${triggerLabel}`);
 }
 // Model name and effort must be separate spans (effort uses the caption tone)
-const labelSpan = trigger.children.find((c) => c?.props?.className === "dsh-es-triggerLabel");
-const effortSpan = trigger.children.find((c) => c?.props?.className === "dsh-es-triggerEffort");
+const labelSpan = trigger.children.find((c) => c?.props?.className === "dsh-rheo-triggerLabel");
+const effortSpan = trigger.children.find((c) => c?.props?.className === "dsh-rheo-triggerEffort");
 if (!labelSpan) throw new Error("trigger label span missing");
 if (text(labelSpan).trim() !== "Reasoning Model") throw new Error(`label span must hold only the model name, got ${JSON.stringify(text(labelSpan))}`);
 if (!effortSpan) throw new Error("trigger effort span missing");
@@ -307,7 +320,7 @@ tree = registered.component({
     select: face.select
 });
 
-const menu = find(tree, (n) => n.props?.className === "dsh-es-menu");
+const menu = find(tree, (n) => n.props?.className === "dsh-rheo-menu");
 if (!menu) throw new Error("menu not rendered after trigger click");
 
 // 6. The popover must float above the trigger (absolute, above), not occupy the input layout
@@ -320,18 +333,18 @@ if (typeof menuStyle.bottom !== "string" || !menuStyle.bottom.includes("100%")) 
 }
 
 // 7. Model picker is a secondary floating window: closed by default, slider always visible
-const modelRow = find(menu, (n) => n.props?.className === "dsh-es-modelRow");
-const divider = find(menu, (n) => n.props?.className === "dsh-es-menuDivider");
-const sliderWrap = find(menu, (n) => n.props?.className === "dsh-es-sliderWrap");
+const modelRow = find(menu, (n) => n.props?.className === "dsh-rheo-modelRow");
+const divider = find(menu, (n) => n.props?.className === "dsh-rheo-menuDivider");
+const sliderWrap = find(menu, (n) => n.props?.className === "dsh-rheo-sliderWrap");
 if (!modelRow) throw new Error("model row (secondary menu trigger) missing");
 if (!divider || !sliderWrap) throw new Error("divider and slider wrap must be in menu");
-const modelList = find(menu, (n) => n.props?.className === "dsh-es-modelList");
+const modelList = find(menu, (n) => n.props?.className === "dsh-rheo-modelList");
 if (modelList) throw new Error("model list must not be inline in the main panel");
 
 const menuText = text(menu);
 if (!menuText.includes("模型")) throw new Error("model row label missing");
 // The model row's trailing glyph must be the DSH chevron-right SVG, not text.
-const modelRowChevron = find(modelRow, (n) => n.props?.className === "dsh-es-chevron");
+const modelRowChevron = find(modelRow, (n) => n.props?.className === "dsh-rheo-chevron");
 if (!modelRowChevron || modelRowChevron.type !== "svg") {
     throw new Error("model row must use the DSH svg chevron, not a text glyph");
 }
@@ -347,13 +360,13 @@ tree = registered.component({
     load: face.load,
     select: face.select
 });
-const menu2 = find(tree, (n) => n.props?.className === "dsh-es-menu");
-const sliderWrap2 = find(menu2, (n) => n.props?.className === "dsh-es-sliderWrap");
-const divider2 = find(menu2, (n) => n.props?.className === "dsh-es-menuDivider");
+const menu2 = find(tree, (n) => n.props?.className === "dsh-rheo-menu");
+const sliderWrap2 = find(menu2, (n) => n.props?.className === "dsh-rheo-sliderWrap");
+const divider2 = find(menu2, (n) => n.props?.className === "dsh-rheo-menuDivider");
 if (!sliderWrap2 || !divider2) throw new Error("slider must stay visible while the model list is open");
 
 // The secondary window is a separate floating popover above the main panel.
-const modelMenu = find(tree, (n) => n.props?.className === "dsh-es-modelMenu");
+const modelMenu = find(tree, (n) => n.props?.className === "dsh-rheo-modelMenu");
 if (!modelMenu) throw new Error("secondary model window not rendered");
 const modelMenuStyle = modelMenu.props.style || {};
 if (modelMenuStyle.position !== "absolute") throw new Error("secondary window must be position:absolute");
@@ -367,7 +380,7 @@ if (!deepseekItem) throw new Error("DeepSeek official model missing from list");
 if (deepseekItem.props.disabled === true || deepseekItem.props["aria-disabled"] === true) {
     throw new Error("text-only models must stay clickable until the host rejects them");
 }
-if (find(deepseekItem, (n) => n.props?.className === "dsh-es-menuItemNotice")) {
+if (find(deepseekItem, (n) => n.props?.className === "dsh-rheo-menuItemNotice")) {
     throw new Error("image notice must stay hidden until the current session has images");
 }
 
@@ -399,7 +412,7 @@ tree = registered.component({
     load: face.load,
     select: face.select
 });
-let menuForImageTest = find(tree, (n) => n.props?.className === "dsh-es-menu");
+let menuForImageTest = find(tree, (n) => n.props?.className === "dsh-rheo-menu");
 if (!menuForImageTest) {
     // Menu is closed, open it via trigger
     tree.children[0].props.onClick();
@@ -411,27 +424,27 @@ if (!menuForImageTest) {
         load: face.load,
         select: face.select
     });
-    menuForImageTest = find(tree, (n) => n.props?.className === "dsh-es-menu");
+    menuForImageTest = find(tree, (n) => n.props?.className === "dsh-rheo-menu");
     if (!menuForImageTest) throw new Error("menu must open for image test");
 }
 // Ensure secondary model menu is open
-let modelMenuForImageTest = find(tree, (n) => n.props?.className === "dsh-es-modelMenu");
+let modelMenuForImageTest = find(tree, (n) => n.props?.className === "dsh-rheo-modelMenu");
 if (!modelMenuForImageTest) {
-    const modelRowForImageTest = find(menuForImageTest, (n) => n.props?.className === "dsh-es-modelRow");
+    const modelRowForImageTest = find(menuForImageTest, (n) => n.props?.className === "dsh-rheo-modelRow");
     if (!modelRowForImageTest) throw new Error("model row must be present for image test");
     modelRowForImageTest.props.onClick();
 }
 // Now render with draft images (menus stay open via mock state)
 tree = renderWithDraftImages();
-const imagedMenu = find(tree, (n) => n.props?.className === "dsh-es-modelMenu");
+const imagedMenu = find(tree, (n) => n.props?.className === "dsh-rheo-modelMenu");
 const imagedVision = find(imagedMenu, (n) => n.props?.type === "button" && text(n).includes("DeepSeek-V4-Flash-Vision-Exp"));
 if (!imagedVision) throw new Error("DeepSeek Flash Vision Exp model missing after draft image render");
-if (find(imagedVision, (n) => n.props?.className === "dsh-es-menuItemNotice")) {
+if (find(imagedVision, (n) => n.props?.className === "dsh-rheo-menuItemNotice")) {
     throw new Error("DeepSeek Flash Vision Exp must not show an image incompatibility notice");
 }
 const imagedDeepseek = find(imagedMenu, (n) => n.props?.type === "button" && text(n).includes("DeepSeek-V4-Flash"));
 if (!imagedDeepseek) throw new Error("DeepSeek official model missing after draft image render");
-const deepseekNotice = find(imagedDeepseek, (n) => n.props?.className === "dsh-es-menuItemNotice");
+const deepseekNotice = find(imagedDeepseek, (n) => n.props?.className === "dsh-rheo-menuItemNotice");
 if (!deepseekNotice || typeof deepseekNotice.props.onMouseEnter !== "function") {
     throw new Error("text-only model must show a hoverable notice icon once draft has images");
 }
@@ -439,21 +452,21 @@ deepseekNotice.props.onMouseEnter({
     currentTarget: { getBoundingClientRect: () => ({ right: 120, bottom: 80 }) }
 });
 tree = renderWithDraftImages();
-const hoverTip = find(tree, (n) => n.props?.className === "dsh-es-menuItemTip");
+const hoverTip = find(tree, (n) => n.props?.className === "dsh-rheo-menuItemTip");
 if (!hoverTip || !text(hoverTip).includes("当前草稿包含图片")) {
     throw new Error("hover tip must explain the image incompatibility only when draft has images");
 }
 
 // 10. Slider: the native input sits above the reference-style rail, fill,
 // and embedded tick markers. Dragging updates the draft locally.
-const sliderRail = find(sliderWrap2, (n) => n.props?.className === "dsh-es-sliderRail");
-const sliderTicks = find(sliderWrap2, (n) => n.props?.className === "dsh-es-sliderTicks");
+const sliderRail = find(sliderWrap2, (n) => n.props?.className === "dsh-rheo-sliderRail");
+const sliderTicks = find(sliderWrap2, (n) => n.props?.className === "dsh-rheo-sliderTicks");
 const slider = findRange(sliderWrap2);
 const sliderFill = findSliderFill(sliderWrap2);
 if (!sliderRail || !sliderTicks || !slider || !sliderFill) throw new Error("reference-style slider layers missing");
 if (Number(slider.props.value) !== 0) throw new Error("slider value should map low -> index 0");
 if (sliderFill.props.style.width !== "0px") throw new Error("first notch fill must sit fully under the thumb");
-const sliderKnob = find(sliderWrap2, (n) => n.props?.className === "dsh-es-sliderKnob");
+const sliderKnob = find(sliderWrap2, (n) => n.props?.className === "dsh-rheo-sliderKnob");
 if (!sliderKnob) throw new Error("custom slider knob missing");
 if (sliderKnob.props.style.left !== "15px") throw new Error("first notch knob must stay inside the rail");
 // Drag to the penultimate notch: it must remain fully blue, with no purple.
@@ -470,7 +483,7 @@ const slider2 = findRange(tree);
 const fill2 = findSliderFill(tree);
 if (Number(slider2.props.value) !== 1) throw new Error("draft must move the thumb to the penultimate notch");
 if (fill2.props.style.width !== "calc(50% + 0px)") throw new Error("mid fill must end at the thumb center");
-const knob2 = find(tree, (n) => n.props?.className === "dsh-es-sliderKnob");
+const knob2 = find(tree, (n) => n.props?.className === "dsh-rheo-sliderKnob");
 if (!knob2 || knob2.props.style.left !== fill2.props.style.width) {
     throw new Error("mid fill must stay glued to the knob");
 }
@@ -487,17 +500,17 @@ const slider3 = findRange(tree);
 const fill3 = findSliderFill(tree);
 if (Number(slider3.props.value) !== 2) throw new Error("draft must move the thumb without committing");
 if (fill3.props.style.width !== "calc(100% + -15px)") throw new Error("terminal fill must span the full rail");
-const knob3 = find(tree, (n) => n.props?.className === "dsh-es-sliderKnob");
+const knob3 = find(tree, (n) => n.props?.className === "dsh-rheo-sliderKnob");
 if (!knob3 || knob3.props.style.left !== "calc(100% - 15px)") {
     throw new Error("last notch knob must stay inside the rail");
 }
-if (!String(fill3.props.className).includes("dsh-es-sliderFillMax")) {
+if (!String(fill3.props.className).includes("dsh-rheo-sliderFillMax")) {
     throw new Error("last notch must reveal the bloom layer");
 }
-if (String(fill2.props.className).includes("dsh-es-sliderFillMax")) {
+if (String(fill2.props.className).includes("dsh-rheo-sliderFillMax")) {
     throw new Error("penultimate notch must keep the bloom hidden");
 }
-if (!find(fill3, (n) => n.props?.className === "dsh-es-sliderBloom")) {
+if (!find(fill3, (n) => n.props?.className === "dsh-rheo-sliderBloom")) {
     throw new Error("bloom layer must stay mounted so color can fade");
 }
 if (directoryCalls.select.length !== 0) throw new Error("drag must not commit before release");
@@ -509,8 +522,8 @@ if (!selected || selected.reasoningEffort !== "high") {
 }
 
 // 11. Model list must be scrollable (flex child with overflow-y:auto)
-const modelMenu2 = find(tree, (n) => n.props?.className === "dsh-es-modelMenu");
-const scrollList = find(modelMenu2, (n) => n.props?.className === "dsh-es-modelList");
+const modelMenu2 = find(tree, (n) => n.props?.className === "dsh-rheo-modelMenu");
+const scrollList = find(modelMenu2, (n) => n.props?.className === "dsh-rheo-modelList");
 if (!scrollList) throw new Error("model list node missing in secondary window");
 
 // 12. Switching models must reset the local draft so the thumb follows the
@@ -526,7 +539,7 @@ tree = registered.component({
 });
 const draftSlider = findRange(tree);
 if (Number(draftSlider.props.value) !== 2) throw new Error("draft should be at high before switching");
-const modelMenu3 = find(tree, (n) => n.props?.className === "dsh-es-modelMenu");
+const modelMenu3 = find(tree, (n) => n.props?.className === "dsh-rheo-modelMenu");
 const otherItem = find(modelMenu3, (n) => n.props?.type === "button" && text(n).includes("Other Model"));
 if (!otherItem) throw new Error("second model item missing from list");
 const selectBefore = directoryCalls.select.length;
@@ -552,7 +565,7 @@ if (Number(afterSwitch.props.value) !== 0) {
 // 13. When the host rejects a model switch, the secondary picker must stay
 //     open and surface the returned error instead of silently closing.
 const failingSelection = { provider: "xiaomi", model: "mimo-v2.5-pro" };
-const modelRowForFail = find(tree, (n) => n.props?.className === "dsh-es-modelRow");
+const modelRowForFail = find(tree, (n) => n.props?.className === "dsh-rheo-modelRow");
 if (!modelRowForFail) throw new Error("model row missing before failed-switch test");
 modelRowForFail.props.onClick();
 beginRender();
@@ -593,8 +606,8 @@ tree = registered.component({
     load: face.load,
     select: face.select
 });
-const menuStillOpen = find(tree, (n) => n.props?.className === "dsh-es-menu");
-const secondaryStillOpen = find(tree, (n) => n.props?.className === "dsh-es-modelMenu");
+const menuStillOpen = find(tree, (n) => n.props?.className === "dsh-rheo-menu");
+const secondaryStillOpen = find(tree, (n) => n.props?.className === "dsh-rheo-modelMenu");
 if (!menuStillOpen || !secondaryStillOpen) {
     throw new Error("failed model switch must keep the picker menus open");
 }
@@ -602,7 +615,7 @@ const blockedItem = find(secondaryStillOpen, (n) => n.props?.type === "button" &
 if (!blockedItem || blockedItem.props["aria-disabled"] !== true) {
     throw new Error("image-incompatible model must be marked unavailable after the host rejects it");
 }
-const blockedNotice = find(blockedItem, (n) => n.props?.className === "dsh-es-menuItemNotice");
+const blockedNotice = find(blockedItem, (n) => n.props?.className === "dsh-rheo-menuItemNotice");
 if (!blockedNotice) throw new Error("blocked model must keep the notice icon");
 const mimoSelection = directoryCalls.select[directoryCalls.select.length - 1];
 if (mimoSelection.provider !== failingSelection.provider || mimoSelection.model !== failingSelection.model || mimoSelection.reasoningEffort !== void 0) {
